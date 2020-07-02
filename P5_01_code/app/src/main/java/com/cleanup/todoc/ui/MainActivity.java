@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * The adapter which handles the list of tasks
      */
-    private final TasksAdapter adapter = new TasksAdapter(tasks, this,allProjects);
+    private final TasksAdapter adapter = new TasksAdapter(tasks, this, allProjects);
 
     /**
      * The sort method to be used to display tasks
@@ -119,13 +119,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         taskViewModel.getTasks().observe(this, items -> {
             // Update de la copie mise en cache des tasks de l'adapteur.
-            tasks    = new ArrayList<>(items);
+            tasks = new ArrayList<>(items);
             updateTasks(tasks);
         });
 
         taskViewModel.getProjects().observe(this, items -> {
             // Update de la copie mise en cache des projects de l'adapteur.
-            allProjects    = new ArrayList<>(items);
+            allProjects = new ArrayList<>(items);
             updateProjects(allProjects);
         });
 
@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
-            else{
+            else {
                 dialogInterface.dismiss();
             }
         }
@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     //AJOUT updateProjects
+
     /**
      * Updates the list of projects in the UI
      */
@@ -346,5 +347,55 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
          * No sort
          */
         NONE
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+
+        int id = -1;
+
+        if (sortMethod == SortMethod.ALPHABETICAL) {
+            id = R.id.filter_alphabetical;
+        } else if (sortMethod == SortMethod.ALPHABETICAL_INVERTED) {
+            id = R.id.filter_alphabetical_inverted
+            ;
+        } else if (sortMethod == SortMethod.OLD_FIRST) {
+            id = R.id.filter_oldest_first
+            ;
+        } else if (sortMethod == SortMethod.RECENT_FIRST) {
+            id = R.id.filter_recent_first
+            ;
+        }
+        savedInstanceState.putInt("MyInt",id);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+//onRestoreInstanceState
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+        int id = savedInstanceState.getInt("MyInt");
+
+        if (id == R.id.filter_alphabetical) {
+            sortMethod = SortMethod.ALPHABETICAL;
+        } else if (id == R.id.filter_alphabetical_inverted) {
+            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+        } else if (id == R.id.filter_oldest_first) {
+            sortMethod = SortMethod.OLD_FIRST;
+        } else if (id == R.id.filter_recent_first) {
+            sortMethod = SortMethod.RECENT_FIRST;
+        }
+
     }
 }
